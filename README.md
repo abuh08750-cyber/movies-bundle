@@ -1,2 +1,2 @@
 # CINEFLIX
-Movies Bundle - Movie Discovery Website
+CINEFLIX - Movie Discovery Website
