@@ -1,1105 +1,1452 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
- 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070b14">
+<meta name="description" content="Discover movies, latest releases, trending titles and upcoming films on CINEFLIX.">
 <meta property="og:site_name" content="CINEFLIX">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "CINEFLIX",
-  "alternateName": "CINEFLIX Movies",
-  "url": "https://cineflix-mocha.vercel.app/"
-}
-</script>
- 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
- <link rel="icon" type="image/png" href="/favicon.png">
- <meta name="google-site-verification" content="djdGu5AJvJwp6hmZsVzWuA45wlHyXE2YrCgLDtXjNUE" />
-<meta name="theme-color" content="#09090d">
 <title>CINEFLIX — Discover Movies</title>
+<link rel="icon" type="image/png" href="/favicon.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
- --bg:#09090d;
- --panel:#14141c;
- --panel2:#1c1c27;
- --gold:#e8bd58;
- --white:#f7f7fb;
- --muted:#9999aa;
- --line:#292936;
- --green:#62d6a1;
+:root {
+  --bg:#070b14;
+  --panel:#101827;
+  --panel2:#172338;
+  --blue:#58c7ff;
+  --white:#f4f8ff;
+  --muted:#9aabc2;
+  --line:#24344d;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
- margin:0;background:var(--bg);color:var(--white);
- font-family:Arial,Helvetica,sans-serif;
+  margin:0;background:var(--bg);color:var(--white);
+  font-family:Arial,Helvetica,sans-serif
 }
 button,input,textarea,select{font:inherit}
 button{
- border:0;border-radius:10px;padding:12px 17px;
- background:var(--gold);color:#17130a;font-weight:800;
- cursor:pointer;transition:.2s;
+  border:0;border-radius:10px;padding:12px 16px;
+  background:linear-gradient(135deg,#71d5ff,#399bdc);
+  color:#061321;font-weight:800;cursor:pointer
 }
-button:hover{filter:brightness(1.08);transform:translateY(-1px)}
 button.secondary{
- background:var(--panel2);color:white;border:1px solid var(--line)
+  background:#18263b;color:white;border:1px solid var(--line)
 }
-button.danger{background:#8e3030;color:white}
+button.danger{background:#9b3d4b;color:white}
+input,textarea,select{
+  width:100%;padding:13px;margin:5px 0 12px;
+  border:1px solid var(--line);border-radius:10px;
+  background:#0d1727;color:white
+}
+label{font-size:13px;color:#c7d4e6}
 header{
- position:sticky;top:0;z-index:5;
- background:#09090ded;border-bottom:1px solid var(--line);
- backdrop-filter:blur(15px)
+  position:sticky;top:0;z-index:5;
+  background:#070b14ed;border-bottom:1px solid var(--line)
 }
 .nav{
- max-width:1200px;margin:auto;padding:15px 20px;
- display:flex;align-items:center;gap:20px;flex-wrap:wrap
+  max-width:1280px;margin:auto;padding:14px 20px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap
 }
-.logo{font-size:25px;font-weight:950;letter-spacing:2px;color:var(--gold)}
-.navlinks{display:flex;gap:20px;flex:1}
-.navlinks a{color:#ddd;text-decoration:none;font-size:14px}
-.navlinks a:hover{color:var(--gold)}
-.wrap{max-width:1200px;margin:auto;padding:25px 20px}
+.logo{
+  font-size:25px;font-weight:950;letter-spacing:2px;
+  color:var(--blue);cursor:pointer
+}
+.navlinks{
+  display:flex;gap:7px;flex:1;overflow-x:auto
+}
+.navlinks a{
+  color:#c7d4e6;text-decoration:none;
+  padding:9px 11px;border-radius:8px;
+  font-size:13px;white-space:nowrap
+}
+.navlinks a:hover{background:#172b43;color:white}
+.wrap{max-width:1280px;margin:auto;padding:24px 20px}
 .hero{
- padding:48px 28px;border-radius:22px;
- background:radial-gradient(circle at 85% 10%,#473519 0,transparent 35%),
- linear-gradient(120deg,#211a0e,#11111a 65%,#19131f);
- border:1px solid #40341f;margin-bottom:25px
+  min-height:210px;padding:40px 30px;border-radius:22px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(110deg,#09182b,#123b5b,#20254b);
+  border:1px solid #31516f;margin-bottom:24px
 }
-.hero h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
-.hero p{color:#c5c5ce;margin:0}
-.gold{color:var(--gold)}
-.tools{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 28px}
-input,textarea,select{
- width:100%;padding:13px;border-radius:10px;
- border:1px solid var(--line);background:#101018;
- color:white;margin:5px 0 12px
+.hero h1{font-size:clamp(32px,6vw,55px);margin:0 0 12px}
+.hero p{color:#c2d2e5;line-height:1.6}
+.blue{color:var(--blue)}
+.tools{display:flex;gap:10px;margin:20px 0 28px}
+.tools input{flex:1;min-width:150px}
+.tools select{max-width:190px}
+.section-title{
+  display:flex;align-items:center;gap:12px;
+  font-size:23px;margin:34px 0 16px
 }
-textarea{min-height:100px;resize:vertical}
-.tools input{flex:1;min-width:180px;margin:0}
-.tools select{max-width:190px;margin:0}
-label{font-size:13px;color:#ccc}
-.section-title{font-size:23px;margin:30px 0 16px}
+.section-title:before{
+  content:"";width:4px;height:25px;
+  border-radius:5px;background:var(--blue)
+}
 .grid{
- display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
- gap:17px
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:16px
 }
 .movie{
- background:var(--panel);border:1px solid var(--line);
- border-radius:15px;overflow:hidden;cursor:pointer;transition:.22s
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  transition:.2s
 }
-.movie:hover{transform:translateY(-4px);border-color:#92763a}
+.movie:hover{transform:translateY(-4px);border-color:var(--blue)}
 .poster{
- width:100%;aspect-ratio:2/3;object-fit:cover;
- background:#222;display:block
+  width:100%;aspect-ratio:2/3;object-fit:cover;
+  display:block;background:#17263b
 }
-.movie-info{padding:12px}
-.movie-info h3{font-size:15px;margin:0 0 7px}
-.muted{color:var(--muted);font-size:12px}
-.empty{
- padding:28px;text-align:center;color:var(--muted);
- border:1px dashed var(--line);border-radius:14px
-}
+.movie-info{padding:11px}
+.movie-info h3{font-size:14px;margin:0 0 7px;line-height:1.4}
+.muted{font-size:12px;color:var(--muted)}
 .notice{
- padding:13px;border-radius:10px;background:#252015;
- color:#e9d28d;margin:12px 0;font-size:13px
+  padding:13px;border-radius:10px;
+  background:#13263a;color:#aee4ff;margin:12px 0
 }
-
-/* PAGE SYSTEM */
+.empty{
+  padding:25px;text-align:center;color:var(--muted);
+  border:1px dashed var(--line);border-radius:12px
+}
 .page{display:none}
 .page.active{display:block}
 .page-top{
- display:flex;align-items:center;justify-content:space-between;
- gap:12px;margin-bottom:20px
+  display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:20px
 }
-.back-btn{
- background:#20202b;color:#eee;border:1px solid var(--line)
-}
-
-/* MOVIE DETAILS */
 .detail-hero{
- display:grid;grid-template-columns:230px 1fr;gap:28px;
- padding:22px;background:linear-gradient(135deg,#191923,#101016);
- border:1px solid var(--line);border-radius:22px;margin-bottom:24px
+  display:grid;grid-template-columns:220px 1fr;gap:25px;
+  padding:20px;background:var(--panel);
+  border:1px solid var(--line);border-radius:18px
 }
 .detail-poster{
- width:100%;border-radius:15px;object-fit:cover;
- aspect-ratio:2/3;background:#222
+  width:100%;aspect-ratio:2/3;object-fit:cover;
+  border-radius:12px;background:#17263b
 }
 .detail-heading{align-self:center}
-.detail-heading h1{font-size:clamp(26px,5vw,42px);margin:0 0 12px}
-.detail-meta{color:#aaa;font-size:13px;line-height:1.8}
-.primary-download{
- margin-top:22px;padding:15px 23px;font-size:15px;
- border-radius:12px;letter-spacing:.4px
-}
+.detail-heading h1{font-size:clamp(25px,5vw,40px)}
+.detail-meta{color:var(--muted);line-height:2}
 .info-section{
- background:var(--panel);border:1px solid var(--line);
- border-radius:17px;padding:20px;margin:15px 0
+  padding:18px;margin:15px 0;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px
 }
-.info-label{
- font-size:11px;letter-spacing:2px;font-weight:900;
- color:var(--gold);margin:0 0 12px
-}
-.info-value{
- color:#e7e7ed;font-size:15px;line-height:1.8;
- overflow-wrap:anywhere
-}
-.cast-list{display:flex;flex-wrap:wrap;gap:9px}
+.info-label{color:var(--blue);font-size:12px;font-weight:900;margin-bottom:10px}
+.info-value{line-height:1.7;overflow-wrap:anywhere}
+.cast-list{display:flex;flex-wrap:wrap;gap:8px}
 .cast-chip{
- padding:9px 13px;border-radius:30px;
- background:#22222e;border:1px solid #343444;
- font-size:13px;color:#e8e8ef
+  padding:8px 12px;background:#1a2b42;
+  border-radius:20px;font-size:12px
 }
 .trailer-button{
- display:inline-block;margin-top:15px;text-decoration:none;
- background:#242430;color:var(--gold);padding:12px 16px;
- border-radius:10px;border:1px solid #48404a;font-weight:700
+  display:inline-block;margin-top:15px;padding:12px 16px;
+  background:#142a40;color:var(--blue);
+  border-radius:10px;text-decoration:none
 }
-
-/* DOWNLOAD PAGE */
-.download-header{
- padding:23px;background:linear-gradient(120deg,#211b10,#15151e);
- border:1px solid #44371f;border-radius:18px;margin-bottom:22px
-}
-.download-header h1{margin:0 0 7px;font-size:27px}
-.download-header p{margin:0;color:#aaa;font-size:13px}
 .download-grid{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
- gap:15px
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px
 }
 .download-card{
- position:relative;overflow:hidden;
- background:linear-gradient(145deg,#1a1a25,#111119);
- border:1px solid #30303e;border-radius:18px;
- padding:20px;transition:.2s
+  padding:18px;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px
 }
-.download-card:hover{
- border-color:#8a713d;transform:translateY(-3px)
-}
-.quality-tag{
- display:inline-block;padding:7px 11px;
- border-radius:8px;background:#332a19;color:var(--gold);
- font-size:11px;font-weight:900;letter-spacing:1px
-}
-.download-card h3{font-size:21px;margin:15px 0 7px}
-.file-size{font-size:14px;color:#c5c5d0}
-.file-language{font-size:12px;color:#888;margin:9px 0 17px}
 .download-btn{
- display:block;width:100%;text-align:center;
- text-decoration:none;padding:13px 10px;
- background:var(--gold);color:#17130a;
- border-radius:11px;font-size:13px;font-weight:900;
- letter-spacing:.5px
+  display:block;text-align:center;padding:13px;
+  background:var(--blue);color:#061321;
+  border-radius:9px;text-decoration:none;font-weight:900
 }
-.no-options{
- padding:25px;background:var(--panel);border-radius:15px;
- border:1px dashed var(--line);color:#aaa;text-align:center
-}
-
-/* MODALS AND ADMIN */
 .modal{
- position:fixed;inset:0;background:#000d;z-index:10;
- display:none;overflow:auto;padding:20px
+  display:none;position:fixed;inset:0;z-index:10;
+  overflow:auto;background:#000d;padding:18px
 }
 .modal.show{display:block}
 .dialog{
- max-width:760px;margin:25px auto;background:#15151e;
- border:1px solid var(--line);border-radius:17px;
- padding:22px;position:relative
+  max-width:760px;margin:25px auto;padding:22px;
+  background:#101c2d;border:1px solid var(--line);
+  border-radius:16px
 }
-.close{
- float:right;background:transparent;color:white;
- font-size:25px;padding:0 8px
-}
+.close{float:right;background:transparent;color:white;font-size:24px}
 #adminPanel{
- display:none;background:#111119;border:1px solid var(--line);
- border-radius:15px;padding:20px;margin:28px 0
+  display:none;margin:25px 0;padding:20px;
+  background:#0d1727;border:1px solid var(--line);
+  border-radius:15px
 }
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.formgrid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
 .formgrid .full{grid-column:1/-1}
-.adminrow{
- padding:13px 5px;border-bottom:1px solid var(--line);
- display:flex;justify-content:space-between;gap:10px;align-items:center
+.check-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;padding:12px;background:#101c2d;
+  border:1px solid var(--line);border-radius:10px
 }
-.adminrow button{padding:9px 11px;margin:2px}
+.check-item{display:flex;gap:8px;align-items:center;font-size:13px}
+.check-item input{width:auto;margin:0}
+.adminrow{
+  padding:13px 5px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:10px;
+  align-items:center
+}
+.adminrow button{padding:8px 10px;margin:2px}
 footer{
- text-align:center;padding:35px 15px;color:#777;
- border-top:1px solid var(--line);margin-top:50px;font-size:12px
+  text-align:center;padding:30px;color:#8296b1;
+  border-top:1px solid var(--line);margin-top:45px
 }
 @media(max-width:650px){
- .nav{gap:12px;padding:13px}
- .navlinks{order:3;flex-basis:100%;overflow:auto}
- .wrap{padding:18px 13px}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
- .detail-hero{grid-template-columns:115px 1fr;gap:15px;padding:14px}
- .detail-heading h1{font-size:23px}
- .detail-poster{border-radius:11px}
- .download-grid{grid-template-columns:1fr}
- .download-card{padding:17px}
- .formgrid{grid-template-columns:1fr}
- .formgrid .full{grid-column:auto}
- .adminrow{align-items:flex-start;flex-direction:column}
+  .nav{padding:12px}
+  .navlinks{order:3;flex-basis:100%}
+  .wrap{padding:16px 12px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+  .detail-hero{grid-template-columns:110px 1fr;gap:13px;padding:12px}
+  .detail-heading h1{font-size:22px}
+  .download-grid,.formgrid{grid-template-columns:1fr}
+  .formgrid .full{grid-column:auto}
+  .check-grid{grid-template-columns:1fr 1fr}
+  .adminrow{align-items:flex-start;flex-direction:column}
 }
-
-/* CINEFLIX VISUAL REFRESH — preserves the supplied working HTML and JS */
-:root{--bg:#070b14;--panel:#101827;--panel2:#172338;--gold:#58c7ff;--white:#f4f8ff;--muted:#9aabc2;--line:#24344d;--green:#62d6a1}
-body{background:radial-gradient(ellipse at 12% 0%,rgba(31,105,170,.20),transparent 35%),radial-gradient(ellipse at 90% 12%,rgba(75,61,160,.15),transparent 32%),var(--bg);color:var(--white)}
-header{background:rgba(7,11,20,.90);border-bottom:1px solid rgba(112,160,210,.20);box-shadow:0 8px 30px rgba(0,0,0,.22)}
-.nav{max-width:1280px;padding:16px 22px}.logo{color:#75d5ff;letter-spacing:2.5px;text-shadow:0 0 24px rgba(65,183,255,.28)}
-.navlinks{gap:8px}.navlinks a{color:#c7d4e6;padding:9px 13px;border-radius:9px;transition:.2s;white-space:nowrap}.navlinks a:hover{color:#fff;background:rgba(70,173,235,.13)}
-.wrap{max-width:1280px;padding:28px 22px}
-.hero{position:relative;overflow:hidden;min-height:220px;display:flex;flex-direction:column;justify-content:center;padding:48px 38px;background:linear-gradient(100deg,rgba(8,18,34,.98),rgba(13,42,68,.88) 58%,rgba(31,44,89,.76)),radial-gradient(circle at 85% 35%,rgba(70,195,255,.35),transparent 35%);border:1px solid rgba(99,188,245,.28);border-radius:24px;box-shadow:0 18px 55px rgba(0,0,0,.24)}
-.hero:after{content:"CINEFLIX";position:absolute;right:28px;bottom:-20px;color:rgba(255,255,255,.035);font-size:clamp(54px,11vw,130px);font-weight:1000;letter-spacing:8px;pointer-events:none}
-.hero h1{max-width:700px;line-height:1.08;letter-spacing:-1.5px}.hero p{max-width:580px;line-height:1.7;color:#c2d2e5}.gold{color:#73d4ff}
-.tools{margin:24px 0 30px}input,textarea,select{background:#0d1727;border:1px solid #2b405d;color:#f4f8ff;border-radius:12px}input:focus,textarea:focus,select:focus{outline:2px solid rgba(83,190,255,.28);border-color:#62c8ff}.tools input{padding:14px 16px}.tools select{padding:14px}
-button{background:linear-gradient(135deg,#71d5ff,#399bdc);color:#061321;border-radius:11px;box-shadow:0 5px 18px rgba(45,158,220,.16)}button.secondary{background:#18263b;color:#e9f4ff;border:1px solid #304966;box-shadow:none}button.danger{background:#9b3d4b;color:#fff}
-.section-title{display:flex;align-items:center;gap:12px;margin:34px 0 17px;font-size:clamp(20px,3vw,25px);letter-spacing:-.3px}.section-title:before{content:"";width:4px;height:25px;border-radius:5px;background:#65ceff;box-shadow:0 0 15px rgba(91,199,255,.45)}
-.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px}.movie{background:linear-gradient(155deg,#142238,#0d1625);border:1px solid #263a55;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.18)}.movie:hover{transform:translateY(-5px);border-color:#55bdf3;box-shadow:0 15px 30px rgba(0,0,0,.30),0 0 0 1px rgba(85,189,243,.10)}.poster{background:#17263b}.movie-info{padding:13px}.movie-info h3{line-height:1.4;color:#f4f8ff}.muted{color:#9aabc2}
-.empty{background:rgba(15,27,44,.7);border:1px dashed #304966;border-radius:14px}.notice{background:#13263a;border:1px solid #294a67;color:#aee4ff;border-radius:12px}
-.page-top{margin-bottom:22px}.back-btn{background:#18263b;border:1px solid #304966;color:#e9f4ff}.detail-hero{background:linear-gradient(135deg,#14243a,#0d1625);border:1px solid #2b405d;box-shadow:0 12px 35px rgba(0,0,0,.2)}.detail-poster{box-shadow:0 12px 28px rgba(0,0,0,.3)}.detail-meta{color:#aabbd0;line-height:2}
-.info-section{background:linear-gradient(145deg,#121f32,#0e1726);border:1px solid #263b56}.info-label{color:#70d1ff}.cast-chip{background:#1a2b42;border:1px solid #304966}.trailer-button{background:#142a40;color:#7bd5ff;border-color:#31516f}
-.download-header{background:linear-gradient(120deg,#102b43,#182346);border:1px solid #31516f}.download-card{background:linear-gradient(145deg,#16263c,#0e1726);border:1px solid #2b405d}.download-card:hover{border-color:#5cc4fa}.quality-tag{background:#153651;color:#8bdcff}.download-btn{background:linear-gradient(135deg,#71d5ff,#399bdc);color:#061321}.no-options{background:#101d2e;border:1px dashed #304966}
-.modal{background:rgba(0,5,13,.82);backdrop-filter:blur(7px)}.dialog{background:#101c2d;border:1px solid #304966;box-shadow:0 20px 70px rgba(0,0,0,.45)}#adminPanel{background:#0d1727;border:1px solid #2b405d}.adminrow{border-bottom:1px solid #263b56}footer{border-top:1px solid #263b56;color:#8296b1}
-@media(max-width:650px){.nav{padding:12px 13px}.navlinks{gap:4px}.navlinks a{padding:8px 10px;font-size:13px}.wrap{padding:18px 13px}.hero{min-height:190px;padding:32px 22px;border-radius:18px}.hero:after{right:10px;font-size:55px;letter-spacing:3px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.movie{border-radius:13px}.movie-info{padding:10px}.movie-info h3{font-size:14px}.section-title{margin:28px 0 14px}}
-
 </style>
 </head>
 
 <body>
-
 <header>
- <div class="nav">
-  <div class="logo" onclick="goHome()" style="cursor:pointer">CINEFLIX</div>
-  <nav class="navlinks">
-   <a href="#home" onclick="goHome()">Home</a>
-   <a href="#trending" onclick="goHome()">Trending</a>
-   <a href="#latest" onclick="goHome()">Latest</a>
-   <a href="#upcoming" onclick="goHome()">Upcoming</a>
-  </nav>
- </div>
+  <div class="nav">
+    <div class="logo" onclick="goHome()">CINEFLIX</div>
+    <nav class="navlinks">
+      <a href="#home" onclick="goHome()">Home</a>
+      <a href="#trending" onclick="goHome()">Trending</a>
+      <a href="#latest" onclick="goHome()">Latest</a>
+      <a href="#upcoming" onclick="goHome()">Upcoming</a>
+      <a href="#bollywood" onclick="goHome()">Bollywood</a>
+      <a href="#south-indian" onclick="goHome()">South Indian</a>
+      <a href="#korean" onclick="goHome()">Korean</a>
+      <a href="#hollywood" onclick="goHome()">Hollywood</a>
+      <a href="#anime" onclick="goHome()">Anime</a>
+      <a href="#web-series" onclick="goHome()">Web Series</a>
+      <a href="#regional" onclick="goHome()">Regional</a>
+    </nav>
+  </div>
 </header>
 
 <main class="wrap">
 
-<!-- HOME PAGE -->
 <section id="homePage" class="page active">
- <section class="hero">
-  <h1>YOUR NEXT <span class="gold">MOVIE</span> NIGHT.</h1>
-  <p>Discover films, explore details and find official viewing options.</p>
- </section>
+  <section class="hero">
+    <h1>YOUR NEXT <span class="blue">MOVIE</span> NIGHT.</h1>
+    <p>Discover movies, explore details and find official viewing options.</p>
+  </section>
 
- <div class="tools">
-  <input id="search" placeholder="Search movies, genres or languages…">
-  <select id="genreFilter">
-   <option value="">All genres</option>
-  </select>
- </div>
-
- <div id="status" class="notice">Connecting to CINEFLIX…</div>
-
- <section id="trending">
-  <h2 class="section-title">Trending Movies</h2>
-  <div class="grid" id="trendingGrid"></div>
- </section>
-
- <section id="latest">
-  <h2 class="section-title">Latest Movies</h2>
-  <div class="grid" id="latestGrid"></div>
- </section>
-
- <section id="upcoming">
-  <h2 class="section-title">Upcoming</h2>
-  <div class="grid" id="upcomingGrid"></div>
- </section>
-</section>
-
-<!-- MOVIE DETAILS PAGE -->
-<section id="detailPage" class="page">
- <div class="page-top">
-  <button class="back-btn" onclick="goHome()">← Back</button>
-  <span class="muted">CINEFLIX / MOVIE DETAILS</span>
- </div>
-
- <div id="detailContent"></div>
-</section>
-
-<!-- DOWNLOAD PAGE -->
-<section id="downloadPage" class="page">
- <div class="page-top">
-  <button class="back-btn" onclick="goDetails()">← Movie Details</button>
-  <span class="muted">CINEFLIX / DOWNLOAD</span>
- </div>
- <div id="downloadContent"></div>
-</section>
-
-<!-- ADMIN -->
-<section id="adminPanel">
- <h2 class="section-title">Admin Dashboard</h2>
- <p class="muted">Signed in as <span id="adminEmail"></span></p>
- <button class="secondary" id="logoutBtn">Log out</button>
-
- <h3>Add / Edit Movie</h3>
-
- <form id="movieForm">
-  <input type="hidden" id="movieId">
-
-  <div class="formgrid">
-   <div>
-    <label>Movie Name *</label>
-    <input id="movieName" required>
-   </div>
-   <div>
-    <label>Genre</label>
-    <input id="genre">
-   </div>
-   <div>
-    <label>Duration</label>
-    <input id="duration" placeholder="2h 10m">
-   </div>
-   <div>
-    <label>Release Date</label>
-    <input id="releaseDate" type="date">
-   </div>
-   <div>
-    <label>Language</label>
-    <input id="language">
-   </div>
-   <div>
-    <label>Starcast</label>
-    <input id="starcast">
-   </div>
-   <div class="full">
-    <label>Description</label>
-    <textarea id="description"></textarea>
-   </div>
-   <div>
-    <label>YouTube Trailer URL</label>
-    <input id="trailer" type="url">
-   </div>
-   <div>
-    <label>Poster image</label>
-    <input id="poster" type="file" accept="image/jpeg,image/png,image/webp">
-   </div>
-   <div>
-    <label>Status</label>
-    <select id="movieStatus">
-     <option value="draft">Draft</option>
-     <option value="published">Published</option>
-     <option value="upcoming">Upcoming</option>
+  <div class="tools">
+    <input id="search" placeholder="Search movies, genres or languages...">
+    <select id="genreFilter">
+      <option value="">All Genres</option>
     </select>
-   </div>
-   <div class="full">
-    <label>Download / Viewing Options</label>
-    <textarea id="movieLinks" placeholder="Quality | File Size | Language | Server | URL | Enabled"></textarea>
-    <p class="muted">
-     Format: Quality | File Size | Language | Server | URL | Enabled
-     <br>Enabled: yes or no. Use only authorized links.
-    </p>
-   </div>
   </div>
 
-  <button type="submit">Save Movie</button>
-  <button type="button" class="secondary" id="resetForm">Clear</button>
- </form>
+  <div id="status" class="notice">Connecting to CINEFLIX...</div>
 
- <h3>Manage Movies</h3>
- <div id="adminMovies"></div>
+  <div id="movieSections"></div>
+</section>
+
+<section id="detailPage" class="page">
+  <div class="page-top">
+    <button class="secondary" onclick="goHome()">← Back</button>
+    <span class="muted">CINEFLIX / MOVIE DETAILS</span>
+  </div>
+  <div id="detailContent"></div>
+</section>
+
+<section id="downloadPage" class="page">
+  <div class="page-top">
+    <button class="secondary" onclick="goDetails()">← Movie Details</button>
+    <span class="muted">CINEFLIX / VIEWING OPTIONS</span>
+  </div>
+  <div id="downloadContent"></div>
+</section>
+
+<section id="adminPanel">
+  <h2 class="section-title">Admin Dashboard</h2>
+  <p class="muted">Signed in as <span id="adminEmail"></span></p>
+  <button class="secondary" id="logoutBtn">Log out</button>
+
+  <h3>Add / Edit Movie</h3>
+
+  <form id="movieForm">
+    <input type="hidden" id="movieId">
+
+    <div class="formgrid">
+      <div>
+        <label>Movie Name *</label>
+        <input id="movieName" required>
+      </div>
+
+      <div>
+        <label>Genre</label>
+        <input id="genre" placeholder="Action, Drama">
+      </div>
+
+      <div>
+        <label>Industry / Cinema</label>
+        <select id="industry">
+          <option>Other</option>
+          <option>Bollywood</option>
+          <option>South Indian</option>
+          <option>Korean</option>
+          <option>Hollywood</option>
+          <option>Japanese</option>
+          <option>Chinese</option>
+          <option>Regional Indian</option>
+          <option>International</option>
+          <option>Animation</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Duration</label>
+        <input id="duration" placeholder="2h 10m">
+      </div>
+
+      <div>
+        <label>Release Date</label>
+        <input id="releaseDate" type="date">
+      </div>
+
+      <div>
+        <label>Language</label>
+        <input id="language">
+      </div>
+
+      <div>
+        <label>Starcast</label>
+        <input id="starcast">
+      </div>
+
+      <div>
+        <label>Sort Order (small number appears first)</label>
+        <input id="sortOrder" type="number" value="100">
+      </div>
+
+      <div class="full">
+        <label>Description</label>
+        <textarea id="description"></textarea>
+      </div>
+
+      <div>
+        <label>YouTube Trailer URL</label>
+        <input id="trailer" type="url">
+      </div>
+
+      <div>
+        <label>Poster Image</label>
+        <input id="poster" type="file" accept="image/jpeg,image/png,image/webp">
+      </div>
+
+      <div>
+        <label>Status</label>
+        <select id="movieStatus">
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="upcoming">Upcoming</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label>Choose Sections — one Movie can appear in multiple Sections</label>
+        <div class="check-grid" id="sectionChoices">
+          <label class="check-item"><input type="checkbox" value="trending"> Trending</label>
+          <label class="check-item"><input type="checkbox" value="latest"> Latest</label>
+          <label class="check-item"><input type="checkbox" value="bollywood"> Bollywood</label>
+          <label class="check-item"><input type="checkbox" value="south-indian"> South Indian</label>
+          <label class="check-item"><input type="checkbox" value="korean"> Korean</label>
+          <label class="check-item"><input type="checkbox" value="hollywood"> Hollywood</label>
+          <label class="check-item"><input type="checkbox" value="anime"> Anime</label>
+          <label class="check-item"><input type="checkbox" value="web-series"> Web Series</label>
+          <label class="check-item"><input type="checkbox" value="regional"> Regional</label>
+          <label class="check-item"><input type="checkbox" value="documentary"> Documentary</label>
+          <label class="check-item"><input type="checkbox" value="animation"> Animation</label>
+          <label class="check-item"><input type="checkbox" value="other"> Other</label>
+        </div>
+      </div>
+
+      <div class="full">
+        <label>Official / Authorized Viewing Options</label>
+        <textarea id="movieLinks" placeholder="Quality | File Size | Language | Server | URL | Enabled"></textarea>
+        <p class="muted">
+          One option per line. Use this only for links you own or are authorized to share.
+        </p>
+      </div>
+    </div>
+
+    <button type="submit">Save Movie</button>
+    <button type="button" class="secondary" id="resetForm">Clear Form</button>
+  </form>
+
+  <h3>Manage Movies</h3>
+  <input id="adminSearch" placeholder="Search movies in Admin...">
+  <div id="adminMovies"></div>
 </section>
 
 </main>
 
 <div class="modal" id="loginModal">
- <div class="dialog">
-  <button class="close" data-close="loginModal">×</button>
-  <h2>Admin Login</h2>
-  <form id="loginForm">
-   <label>Email</label>
-   <input id="email" type="email" required>
-   <label>Password</label>
-   <input id="password" type="password" required>
-   <button type="submit">Sign in</button>
-  </form>
-  <p class="muted">Admin access is restricted to the authorized Supabase account.</p>
- </div>
+  <div class="dialog">
+    <button class="close" data-close="loginModal">×</button>
+    <h2>Admin Login</h2>
+    <form id="loginForm">
+      <label>Email</label>
+      <input id="email" type="email" required>
+      <label>Password</label>
+      <input id="password" type="password" required>
+      <button type="submit">Sign In</button>
+    </form>
+    <p class="muted">Only authorized Admin accounts can access this dashboard.</p>
+  </div>
 </div>
 
 <div class="modal" id="passwordModal">
- <div class="dialog">
-  <h2>Set New Password</h2>
-  <form id="passwordForm">
-   <label>New Password</label>
-   <input id="newPassword" type="password" minlength="8" required>
-   <label>Confirm New Password</label>
-   <input id="confirmPassword" type="password" minlength="8" required>
-   <button type="submit">Update Password</button>
-  </form>
-  <p class="muted">Choose at least 8 characters.</p>
- </div>
+  <div class="dialog">
+    <h2>Set New Password</h2>
+    <form id="passwordForm">
+      <label>New Password</label>
+      <input id="newPassword" type="password" minlength="8" required>
+      <label>Confirm Password</label>
+      <input id="confirmPassword" type="password" minlength="8" required>
+      <button type="submit">Update Password</button>
+    </form>
+  </div>
 </div>
 
 <footer>
- © <span id="year"></span> CINEFLIX. Movie information and posters are for discovery. Viewing links must be official or authorized.
-</footer>
+  © <span id="year"></span> CINEFLIX. Movie information and posters are for discovery.
+  Viewing links must be official or authorized.
+ </footer>
+ <script>
+/* =====================================
+   CINEFLIX CONFIGURATION
+===================================== */
 
-<script>
-const SUPABASE_URL = "https://quczwzxnexlgehhrlmof.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_1r3ACgZZPKqAGNAX_hRS6g_HyYme2AM";
+const SUPABASE_URL =
+  "https://quczwzxnexlgehhrlmof.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_1r3ACgZZPKqAGNAX_hRS6g_HYyme2AM";
 
 const db = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
 );
 
 let movies = [];
+let adminMovies = [];
 let isAdmin = false;
 let currentMovie = null;
 let currentLinks = [];
 
 const $ = id => document.getElementById(id);
 
-$('year').textContent = new Date().getFullYear();
+$("year").textContent = new Date().getFullYear();
 
-function msg(s,bad=false){
- $('status').textContent=s;
- $('status').style.color=bad?'#ff9b9b':'#e9d28d';
-}
+/* =====================================
+   SECTION CONFIGURATION
+===================================== */
 
-function showModal(id){$(id).classList.add('show')}
-function closeModal(id){$(id).classList.remove('show')}
-
-document.querySelectorAll('[data-close]').forEach(b=>{
- b.onclick=()=>closeModal(b.dataset.close);
-});
-
-function safeUrl(u){
- try{
-  const x=new URL(u);
-  return ['https:','http:'].includes(x.protocol)?x.href:'#';
- }catch{return '#'}
-}
-
-/* PAGE NAVIGATION */
-
-function showPage(id){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- $(id).classList.add('active');
- window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function goHome(){
- showPage('homePage');
- history.replaceState(null,'',location.pathname+location.search+'#home');
-}
-
-function goDetails(){
- if(currentMovie)openDetails(currentMovie.id);
-}
-
-function goDownload(){
- if(!currentMovie)return;
- openDownloadPage();
-}
-
-/* MOVIE CARDS */
-
-function card(m){
- const el=document.createElement('article');
- el.className='movie';
-
- const img=document.createElement('img');
- img.className='poster';
- img.src=m.poster_url||'';
- img.alt=m.movie_name||'Movie poster';
-
- const info=document.createElement('div');
- info.className='movie-info';
-
- const title=document.createElement('h3');
- title.textContent=m.movie_name||'Untitled';
-
- const meta=document.createElement('div');
- meta.className='muted';
- meta.textContent=[m.release_date||'',m.language||'']
- .filter(Boolean).join(' • ');
-
- info.append(title,meta);
- el.append(img,info);
- el.onclick=()=>openDetails(m.id);
- return el;
-}
-
-function renderGrid(id,list){
- const g=$(id);
- g.innerHTML='';
-
- if(!list.length){
-  g.innerHTML='<div class="empty">No movies to show yet.</div>';
-  return;
- }
-
- list.forEach(m=>g.appendChild(card(m)));
-}
-
-function render(){
- const q=$('search').value.toLowerCase();
- const genre=$('genreFilter').value;
-
- const filtered=movies.filter(m=>
-  (!q||[
-   m.movie_name,m.genre,m.language,m.starcast
-  ].join(' ').toLowerCase().includes(q))
-  &&(!genre||(m.genre||'').split(',').map(x=>x.trim()).includes(genre))
- );
-
- renderGrid('trendingGrid',filtered.slice(0,8));
-
- renderGrid('latestGrid',[...filtered].sort((a,b)=>
-  (b.release_date||'').localeCompare(a.release_date||'')
- ).slice(0,12));
-
- renderGrid('upcomingGrid',filtered.filter(m=>m.status==='upcoming'));
-}
-
-const DEFAULT_GENRES=[
- 'Action','Adventure','Animation','Biography','Comedy','Crime',
- 'Documentary','Drama','Family','Fantasy','History','Horror',
- 'Mystery','Romance','Sci-Fi','Sport','Thriller','War','Western','Study'
+const SECTIONS = [
+  {id:"trending", title:"Trending Movies"},
+  {id:"latest", title:"Latest Movies"},
+  {id:"upcoming", title:"Upcoming Movies"},
+  {id:"bollywood", title:"Bollywood Movies"},
+  {id:"south-indian", title:"South Indian Movies"},
+  {id:"korean", title:"Korean Movies"},
+  {id:"hollywood", title:"Hollywood Movies"},
+  {id:"anime", title:"Anime"},
+  {id:"web-series", title:"Web Series"},
+  {id:"regional", title:"Regional Movies"},
+  {id:"documentary", title:"Documentaries"},
+  {id:"animation", title:"Animation"},
+  {id:"other", title:"Other Movies"}
 ];
 
-function populateGenres(){
- const current=$('genreFilter').value;
- const movieGenres=movies.flatMap(m=>(m.genre||'').split(','))
- .map(x=>x.trim()).filter(Boolean);
+const DEFAULT_GENRES = [
+  "Action","Adventure","Animation","Biography",
+  "Comedy","Crime","Documentary","Drama",
+  "Family","Fantasy","History","Horror",
+  "Mystery","Romance","Sci-Fi","Sport",
+  "Thriller","War","Western"
+];
 
- const genres=[...new Set([...DEFAULT_GENRES,...movieGenres])]
- .sort((a,b)=>a.localeCompare(b));
+/* =====================================
+   GENERAL HELPERS
+===================================== */
 
- $('genreFilter').innerHTML='<option value="">All genres</option>';
-
- genres.forEach(g=>{
-  const o=document.createElement('option');
-  o.value=g;o.textContent=g;
-  $('genreFilter').append(o);
- });
-
- $('genreFilter').value=genres.includes(current)?current:'';
+function showMessage(message, bad=false) {
+  const box = $("status");
+  box.textContent = message;
+  box.style.color = bad ? "#ff9999" : "#aee4ff";
 }
 
-async function loadMovies(){
- msg('Loading movies…');
-
- const {data,error}=await db.from('movies')
- .select('*').in('status',['published','upcoming'])
- .order('created_at',{ascending:false});
-
- if(error){
-  msg('Could not load movies: '+error.message,true);
-  return;
- }
-
- movies=data||[];
- populateGenres();
- render();
-
- msg(movies.length?`${movies.length} movies available.`:
- 'CINEFLIX is ready. Movie listings will appear here when published.');
-}
-
-/* MOVIE DETAILS PAGE */
-
-async function openDetails(id){
- const m=movies.find(x=>x.id===id);
- if(!m)return;
-
- currentMovie=m;
-
- const {data:links,error}=await db.from('movie_links')
- .select('*').eq('movie_id',id).eq('is_active',true);
-
- if(error){
-  alert('Could not load movie information: '+error.message);
-  return;
- }
-
- currentLinks=links||[];
-
- const d=$('detailContent');
- d.innerHTML='';
-
- const hero=document.createElement('div');
- hero.className='detail-hero';
-
- const poster=document.createElement('img');
- poster.className='detail-poster';
- poster.src=m.poster_url||'';
- poster.alt=m.movie_name||'Movie poster';
-
- const heading=document.createElement('div');
- heading.className='detail-heading';
-
- const title=document.createElement('h1');
- title.textContent=m.movie_name||'Untitled';
-
- const meta=document.createElement('div');
- meta.className='detail-meta';
- meta.textContent=[m.release_date,m.duration,m.language]
- .filter(Boolean).join('  •  ');
-
- const btn=document.createElement('button');
- btn.className='primary-download';
- btn.textContent='↓  DOWNLOAD MOVIE';
- btn.onclick=goDownload;
-
- heading.append(title,meta,btn);
- hero.append(poster,heading);
- d.append(hero);
-
- // Genre section
- addInfoSection(d,'GENRE',m.genre||'Not listed');
-
- // Description section
- addInfoSection(d,'DESCRIPTION',m.description||'No description available.');
-
- // Starcast section
- const castSection=document.createElement('section');
- castSection.className='info-section';
-
- const castLabel=document.createElement('div');
- castLabel.className='info-label';
- castLabel.textContent='STARCAST';
-
- const castList=document.createElement('div');
- castList.className='cast-list';
-
- (m.starcast||'Not listed').split(',').forEach(name=>{
-  const chip=document.createElement('span');
-  chip.className='cast-chip';
-  chip.textContent=name.trim();
-  castList.append(chip);
- });
-
- castSection.append(castLabel,castList);
- d.append(castSection);
-
- // Release date
- addInfoSection(d,'RELEASE DATE',m.release_date||'Not listed');
-
- // Duration
- addInfoSection(d,'DURATION',m.duration||'Not listed');
-
- // Language
- addInfoSection(d,'LANGUAGE',m.language||'Not listed');
-
- if(m.trailer_url){
-  const trailer=safeUrl(m.trailer_url);
-  if(trailer!=='#'){
-   const a=document.createElement('a');
-   a.className='trailer-button';
-   a.href=trailer;
-   a.target='_blank';
-   a.rel='noopener noreferrer';
-   a.textContent='▶  WATCH TRAILER';
-   d.append(a);
+function safeUrl(value) {
+  try {
+    const url = new URL(value);
+    if (!["https:","http:"].includes(url.protocol)) return "#";
+    return url.href;
+  } catch {
+    return "#";
   }
- }
-
- showPage('detailPage');
- history.replaceState(null,'',location.pathname+location.search+'#movie/'+id);
 }
 
-function addInfoSection(parent,label,value){
- const section=document.createElement('section');
- section.className='info-section';
-
- const heading=document.createElement('div');
- heading.className='info-label';
- heading.textContent=label;
-
- const text=document.createElement('div');
- text.className='info-value';
- text.textContent=value;
-
- section.append(heading,text);
- parent.append(section);
+function showModal(id) {
+  $(id).classList.add("show");
 }
 
-/* SEPARATE DOWNLOAD PAGE */
-
-function openDownloadPage(){
- if(!currentMovie)return;
-
- const box=$('downloadContent');
- box.innerHTML='';
-
- const head=document.createElement('div');
- head.className='download-header';
-
- const title=document.createElement('h1');
- title.textContent='Download Movie';
-
- const subtitle=document.createElement('p');
- subtitle.textContent=currentMovie.movie_name+' · Select an available quality';
-
- head.append(title,subtitle);
- box.append(head);
-
- if(!currentLinks.length){
-  const empty=document.createElement('div');
-  empty.className='no-options';
-  empty.textContent='No authorized download options are available yet.';
-  box.append(empty);
-  showPage('downloadPage');
-  return;
- }
-
- const grid=document.createElement('div');
- grid.className='download-grid';
-
- currentLinks.forEach(link=>{
-  const url=safeUrl(link.link_url);
-  if(url==='#')return;
-
-  const card=document.createElement('article');
-  card.className='download-card';
-
-  const tag=document.createElement('span');
-  tag.className='quality-tag';
-  tag.textContent='VIDEO QUALITY';
-
-  const quality=document.createElement('h3');
-  quality.textContent=link.quality||'Video';
-
-  const size=document.createElement('div');
-  size.className='file-size';
-  size.textContent='File Size: '+(link.file_size||'Not specified');
-
-  const language=document.createElement('div');
-  language.className='file-language';
-  language.textContent=[
-   link.language||'',
-   link.server_name||''
-  ].filter(Boolean).join(' · ');
-
-  const a=document.createElement('a');
-  a.className='download-btn';
-  a.href=url;
-  a.target='_blank';
-  a.rel='noopener noreferrer';
-  a.textContent='↓  DOWNLOAD MOVIE';
-
-  card.append(tag,quality,size,language,a);
-  grid.append(card);
- });
-
- if(!grid.children.length){
-  const empty=document.createElement('div');
-  empty.className='no-options';
-  empty.textContent='No valid authorized download options available.';
-  box.append(empty);
- }else{
-  box.append(grid);
- }
-
- showPage('downloadPage');
- history.replaceState(null,'',location.pathname+location.search+'#download/'+currentMovie.id);
+function closeModal(id) {
+  $(id).classList.remove("show");
 }
 
-$('search').oninput=render;
-$('genreFilter').onchange=render;
-
-/* ADMIN LOGIN */
-
-if(new URLSearchParams(window.location.search).get('admin')==='1'){
- showModal('loginModal');
-}
-
-$('loginForm').onsubmit=async e=>{
- e.preventDefault();
-
- const {error}=await db.auth.signInWithPassword({
-  email:$('email').value.trim(),
-  password:$('password').value
- });
-
- if(error){alert(error.message);return;}
-
- closeModal('loginModal');
- await checkAdmin();
-};
-
-$('logoutBtn').onclick=async()=>{
- await db.auth.signOut();
- $('adminPanel').style.display='none';
- isAdmin=false;
-};
-
-async function checkAdmin(){
- const {data:{user}}=await db.auth.getUser();
- if(!user)return;
-
- const {data,error}=await db.from('admin_users')
- .select('user_id').eq('user_id',user.id).maybeSingle();
-
- if(error||!data){
-  alert('This account is not authorized as an admin.');
-  await db.auth.signOut();
-  return;
- }
-
- isAdmin=true;
- $('adminPanel').style.display='block';
- $('adminEmail').textContent=user.email;
-
- await loadAdminMovies();
- $('adminPanel').scrollIntoView({behavior:'smooth'});
-}
-
-async function loadAdminMovies(){
- const {data,error}=await db.from('movies')
- .select('*').order('created_at',{ascending:false});
-
- if(error){alert(error.message);return;}
-
- const box=$('adminMovies');
- box.innerHTML='';
-
- (data||[]).forEach(m=>{
-  const row=document.createElement('div');
-  row.className='adminrow';
-
-  const name=document.createElement('span');
-  name.textContent=m.movie_name+' — '+m.status;
-
-  const actions=document.createElement('span');
-
-  const edit=document.createElement('button');
-  edit.className='secondary';
-  edit.textContent='Edit';
-  edit.onclick=()=>fillForm(m);
-
-  const del=document.createElement('button');
-  del.className='danger';
-  del.textContent='Delete';
-  del.onclick=()=>deleteMovie(m.id);
-
-  actions.append(edit,del);
-  row.append(name,actions);
-  box.append(row);
- });
-}
-
-async function fillForm(m){
- $('movieId').value=m.id;
- $('movieName').value=m.movie_name||'';
- $('genre').value=m.genre||'';
- $('duration').value=m.duration||'';
- $('releaseDate').value=m.release_date||'';
- $('language').value=m.language||'';
- $('starcast').value=m.starcast||'';
- $('description').value=m.description||'';
- $('trailer').value=m.trailer_url||'';
- $('movieStatus').value=m.status||'draft';
-
- $('movieLinks').value='Loading saved options...';
-
- const {data,error}=await db.from('movie_links')
- .select('*').eq('movie_id',m.id)
- .order('created_at',{ascending:true});
-
- if(error){
-  $('movieLinks').value='';
-  alert('Could not load saved options: '+error.message);
-  return;
- }
-
- $('movieLinks').value=(data||[]).map(l=>[
-  l.quality||'',
-  l.file_size||'',
-  l.language||'',
-  l.server_name||'',
-  l.link_url||'',
-  l.is_active===false?'no':'yes'
- ].join(' | ')).join('\n');
-
- $('movieForm').scrollIntoView({behavior:'smooth'});
-}
-
-$('resetForm').onclick=()=>{
- $('movieForm').reset();
- $('movieId').value='';
- $('movieLinks').value='';
-};
-/* SAVE MOVIE AND OPTIONS */
-
-$('movieForm').onsubmit=async e=>{
- e.preventDefault();
-
- if(!isAdmin){
-  alert('Admin login required.');
-  return;
- }
-
- const id=$('movieId').value;
- let posterUrl=null;
-
- const file=$('poster').files[0];
-
- if(file){
-  const path=Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-
-  const {error}=await db.storage.from('movie-posters')
-  .upload(path,file,{upsert:false});
-
-  if(error){
-   alert('Poster upload failed: '+error.message);
-   return;
-  }
-
-  posterUrl=db.storage.from('movie-posters')
-  .getPublicUrl(path).data.publicUrl;
- }
-
- const record={
-  movie_name:$('movieName').value.trim(),
-  genre:$('genre').value.trim(),
-  duration:$('duration').value.trim(),
-  release_date:$('releaseDate').value||null,
-  language:$('language').value.trim(),
-  starcast:$('starcast').value.trim(),
-  description:$('description').value.trim(),
-  trailer_url:$('trailer').value.trim()||null,
-  status:$('movieStatus').value
- };
-
- if(posterUrl)record.poster_url=posterUrl;
-
- const result=id
-  ?await db.from('movies').update(record).eq('id',id).select().single()
-  :await db.from('movies').insert(record).select().single();
-
- if(result.error){
-  alert(result.error.message);
-  return;
- }
-
- const movie=result.data;
-
- const {error:deleteError}=await db.from('movie_links')
- .delete().eq('movie_id',movie.id);
-
- if(deleteError){
-  alert('Movie saved, but old options could not be updated: '+deleteError.message);
-  return;
- }
-
- const lines=$('movieLinks').value.split('\n')
- .map(x=>x.trim()).filter(Boolean);
-
- const optionRows=[];
-
- for(const line of lines){
-  const p=line.split('|').map(x=>x.trim());
-
-  if(p.length<5||!p[0]||!p[4])continue;
-
-  const url=safeUrl(p[4]);
-  if(url==='#')continue;
-
-  optionRows.push({
-   movie_id:movie.id,
-   quality:p[0],
-   file_size:p[1]||null,
-   language:p[2]||null,
-   server_name:p[3]||null,
-   link_url:url,
-   is_active:!['no','false','off','0'].includes(
-    (p[5]||'yes').toLowerCase()
-   )
+document.querySelectorAll("[data-close]").forEach(button => {
+  button.addEventListener("click", () => {
+    closeModal(button.dataset.close);
   });
- }
-
- if(optionRows.length){
-  const {error:insertError}=await db.from('movie_links')
-  .insert(optionRows);
-
-  if(insertError){
-   alert('Movie saved, but options failed: '+insertError.message);
-   return;
-  }
- }
-
- alert('Movie saved successfully.');
-
- $('movieForm').reset();
- $('movieId').value='';
- $('movieLinks').value='';
-
- await loadAdminMovies();
- await loadMovies();
-};
-
-async function deleteMovie(id){
- if(!confirm('Delete this movie and its links?'))return;
-
- const {error}=await db.from('movies').delete().eq('id',id);
-
- if(error){
-  alert(error.message);
- }else{
-  await loadAdminMovies();
-  await loadMovies();
- }
-}
-
-/* PASSWORD RECOVERY */
-
-$('passwordForm').onsubmit=async e=>{
- e.preventDefault();
-
- const password=$('newPassword').value;
- const confirmPassword=$('confirmPassword').value;
-
- if(password.length<8){
-  alert('Password must be at least 8 characters.');
-  return;
- }
-
- if(password!==confirmPassword){
-  alert('Passwords do not match.');
-  return;
- }
-
- const {error}=await db.auth.updateUser({password});
-
- if(error){
-  alert('Password update failed: '+error.message);
-  return;
- }
-
- $('passwordForm').reset();
- closeModal('passwordModal');
- alert('Password updated successfully.');
- await checkAdmin();
-};
-
-db.auth.onAuthStateChange((event,session)=>{
- if(event==='PASSWORD_RECOVERY'&&session){
-  setTimeout(()=>showModal('passwordModal'),0);
-  return;
- }
-
- if(session){
-  setTimeout(checkAdmin,0);
- }
 });
 
+/* =====================================
+   PAGE NAVIGATION
+===================================== */
+
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  $(id).classList.add("active");
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function goHome() {
+  showPage("homePage");
+  history.replaceState(
+    null,
+    "",
+    location.pathname + location.search + "#home"
+  );
+}
+
+function goDetails() {
+  if (currentMovie) {
+    openDetails(currentMovie.id);
+  }
+}
+
+function goDownload() {
+  if (currentMovie) {
+    openDownloadPage();
+  }
+}
+
+/* =====================================
+   MOVIE SECTION HELPERS
+===================================== */
+
+function getSections(movie) {
+  if (Array.isArray(movie.sections)) {
+    return movie.sections;
+  }
+  return [];
+}
+
+function sortMovies(list) {
+  return [...list].sort((a,b) => {
+    const orderA = Number(a.sort_order ?? 100);
+    const orderB = Number(b.sort_order ?? 100);
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    return (b.release_date || "").localeCompare(
+      a.release_date || ""
+    );
+  });
+}
+
+function createMovieCard(movie) {
+  const card = document.createElement("article");
+  card.className = "movie";
+
+  const poster = document.createElement("img");
+  poster.className = "poster";
+  poster.loading = "lazy";
+  poster.alt = movie.movie_name || "Movie poster";
+
+  const posterUrl = safeUrl(movie.poster_url || "");
+  poster.src = posterUrl === "#" ? "" : posterUrl;
+
+  const info = document.createElement("div");
+  info.className = "movie-info";
+
+  const title = document.createElement("h3");
+  title.textContent = movie.movie_name || "Untitled";
+
+  const meta = document.createElement("div");
+  meta.className = "muted";
+  meta.textContent = [
+    movie.release_date || "",
+    movie.language || ""
+  ].filter(Boolean).join(" • ");
+
+  info.append(title,meta);
+  card.append(poster,info);
+
+  card.addEventListener("click", () => {
+    openDetails(movie.id);
+  });
+
+  return card;
+}
+
+function renderGrid(container,list) {
+  container.innerHTML = "";
+
+  if (!list.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No movies available in this section yet.";
+    container.append(empty);
+    return;
+  }
+
+  list.forEach(movie => {
+    container.append(createMovieCard(movie));
+  });
+}
+
+/* =====================================
+   SEARCH AND FILTER
+===================================== */
+
+function getFilteredMovies() {
+  const query = $("search").value.trim().toLowerCase();
+  const genre = $("genreFilter").value;
+
+  return movies.filter(movie => {
+    const searchText = [
+      movie.movie_name,
+      movie.genre,
+      movie.language,
+      movie.starcast,
+      movie.industry,
+      movie.description
+    ].join(" ").toLowerCase();
+
+    const matchesSearch =
+      !query || searchText.includes(query);
+
+    const genres = (movie.genre || "")
+      .split(",")
+      .map(value => value.trim());
+
+    const matchesGenre =
+      !genre || genres.includes(genre);
+
+    return matchesSearch && matchesGenre;
+  });
+}
+
+/* =====================================
+   RENDER ALL SECTIONS
+===================================== */
+
+function renderSections() {
+  const container = $("movieSections");
+  container.innerHTML = "";
+
+  const filtered = getFilteredMovies();
+
+  SECTIONS.forEach(section => {
+    let sectionMovies;
+
+    if (section.id === "upcoming") {
+      sectionMovies = filtered.filter(movie =>
+        movie.status === "upcoming" ||
+        getSections(movie).includes("upcoming")
+      );
+    } else {
+      sectionMovies = filtered.filter(movie =>
+        getSections(movie).includes(section.id)
+      );
+    }
+
+    sectionMovies = sortMovies(sectionMovies);
+
+    // Hide empty sections from public homepage.
+    if (!sectionMovies.length) return;
+
+    const sectionElement = document.createElement("section");
+    sectionElement.id = section.id;
+
+    const heading = document.createElement("h2");
+    heading.className = "section-title";
+    heading.textContent = section.title;
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    renderGrid(grid,sectionMovies);
+
+    sectionElement.append(heading,grid);
+    container.append(sectionElement);
+  });
+
+  if (!container.children.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No matching movies found.";
+    container.append(empty);
+  }
+}
+
+/* =====================================
+   GENRE FILTER
+===================================== */
+
+function populateGenres() {
+  const previous = $("genreFilter").value;
+
+  const movieGenres = movies.flatMap(movie =>
+    (movie.genre || "").split(",")
+  ).map(value => value.trim()).filter(Boolean);
+
+  const allGenres = [
+    ...new Set([...DEFAULT_GENRES,...movieGenres])
+  ].sort((a,b) => a.localeCompare(b));
+
+  $("genreFilter").innerHTML =
+    '<option value="">All Genres</option>';
+
+  allGenres.forEach(genre => {
+    const option = document.createElement("option");
+    option.value = genre;
+    option.textContent = genre;
+    $("genreFilter").append(option);
+  });
+
+  $("genreFilter").value =
+    allGenres.includes(previous) ? previous : "";
+}
+
+/* =====================================
+   LOAD PUBLIC MOVIES
+===================================== */
+
+async function loadMovies() {
+  showMessage("Loading movies...");
+
+  const {data,error} = await db
+    .from("movies")
+    .select("*")
+    .in("status",["published","upcoming"]);
+
+  if (error) {
+    showMessage("Could not load movies: " + error.message,true);
+    return;
+  }
+
+  movies = data || [];
+
+  populateGenres();
+  renderSections();
+
+  showMessage(
+    movies.length
+      ? movies.length + " movies available."
+      : "CINEFLIX is ready. No published movies yet."
+  );
+}
+
+$("search").addEventListener("input",renderSections);
+$("genreFilter").addEventListener("change",renderSections);
+
+/* =====================================
+   MOVIE DETAILS
+===================================== */
+
+async function openDetails(id) {
+  const movie = movies.find(item => item.id === id);
+
+  if (!movie) return;
+
+  currentMovie = movie;
+
+  const {data,error} = await db
+    .from("movie_links")
+    .select("*")
+    .eq("movie_id",id)
+    .eq("is_active",true);
+
+  if (error) {
+    alert("Could not load viewing options: " + error.message);
+    return;
+  }
+
+  currentLinks = data || [];
+
+  const box = $("detailContent");
+  box.innerHTML = "";
+
+  const hero = document.createElement("div");
+  hero.className = "detail-hero";
+
+  const poster = document.createElement("img");
+  poster.className = "detail-poster";
+  poster.alt = movie.movie_name || "Movie poster";
+
+  const posterUrl = safeUrl(movie.poster_url || "");
+  poster.src = posterUrl === "#" ? "" : posterUrl;
+
+  const heading = document.createElement("div");
+  heading.className = "detail-heading";
+
+  const title = document.createElement("h1");
+  title.textContent = movie.movie_name || "Untitled";
+
+  const meta = document.createElement("div");
+  meta.className = "detail-meta";
+  meta.textContent = [
+    movie.release_date,
+    movie.duration,
+    movie.language,
+    movie.industry
+  ].filter(Boolean).join(" • ");
+
+  const viewButton = document.createElement("button");
+  viewButton.className = "primary-download";
+  viewButton.textContent = "VIEWING OPTIONS";
+  viewButton.addEventListener("click",goDownload);
+
+  heading.append(title,meta,viewButton);
+  hero.append(poster,heading);
+  box.append(hero);
+
+  addInfoSection(box,"INDUSTRY",movie.industry || "Other");
+  addInfoSection(box,"GENRE",movie.genre || "Not listed");
+  addInfoSection(box,"DESCRIPTION",movie.description || "No description available.");
+  addInfoSection(box,"RELEASE DATE",movie.release_date || "Not listed");
+  addInfoSection(box,"DURATION",movie.duration || "Not listed");
+  addInfoSection(box,"LANGUAGE",movie.language || "Not listed");
+
+  const castSection = document.createElement("section");
+  castSection.className = "info-section";
+
+  const castLabel = document.createElement("div");
+  castLabel.className = "info-label";
+  castLabel.textContent = "STARCAST";
+
+  const castList = document.createElement("div");
+  castList.className = "cast-list";
+
+  (movie.starcast || "Not listed")
+    .split(",")
+    .forEach(name => {
+      const chip = document.createElement("span");
+      chip.className = "cast-chip";
+      chip.textContent = name.trim();
+      castList.append(chip);
+    });
+
+  castSection.append(castLabel,castList);
+  box.append(castSection);
+
+  if (movie.trailer_url) {
+    const url = safeUrl(movie.trailer_url);
+
+    if (url !== "#") {
+      const link = document.createElement("a");
+      link.className = "trailer-button";
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "▶ WATCH TRAILER";
+      box.append(link);
+    }
+  }
+
+  showPage("detailPage");
+
+  history.replaceState(
+    null,
+    "",
+    location.pathname + location.search + "#movie/" + id
+  );
+}
+
+function addInfoSection(parent,label,value) {
+  const section = document.createElement("section");
+  section.className = "info-section";
+
+  const heading = document.createElement("div");
+  heading.className = "info-label";
+  heading.textContent = label;
+
+  const text = document.createElement("div");
+  text.className = "info-value";
+  text.textContent = value;
+
+  section.append(heading,text);
+  parent.append(section);
+}
+
+/* =====================================
+   VIEWING OPTIONS PAGE
+===================================== */
+
+function openDownloadPage() {
+  if (!currentMovie) return;
+
+  const box = $("downloadContent");
+  box.innerHTML = "";
+
+  const heading = document.createElement("h2");
+  heading.textContent = currentMovie.movie_name;
+
+  const subtitle = document.createElement("p");
+  subtitle.className = "muted";
+  subtitle.textContent = "Available official viewing options";
+
+  box.append(heading,subtitle);
+
+  if (!currentLinks.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No viewing options are available yet.";
+    box.append(empty);
+    showPage("downloadPage");
+    return;
+  }
+
+  const grid = document.createElement("div");
+  grid.className = "download-grid";
+
+  currentLinks.forEach(link => {
+    const url = safeUrl(link.link_url);
+
+    if (url === "#") return;
+
+    const card = document.createElement("article");
+    card.className = "download-card";
+
+    const quality = document.createElement("h3");
+    quality.textContent = link.quality || "Viewing Option";
+
+    const details = document.createElement("p");
+    details.className = "muted";
+    details.textContent = [
+      link.file_size || "",
+      link.language || "",
+      link.server_name || ""
+    ].filter(Boolean).join(" • ");
+
+    const anchor = document.createElement("a");
+    anchor.className = "download-btn";
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.textContent = "OPEN OFFICIAL LINK";
+
+    card.append(quality,details,anchor);
+    grid.append(card);
+  });
+
+  if (!grid.children.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No valid viewing links available.";
+    box.append(empty);
+  } else {
+    box.append(grid);
+  }
+
+  showPage("downloadPage");
+}
+
+/* =====================================
+   ADMIN LOGIN
+===================================== */
+
+if (new URLSearchParams(location.search).get("admin") === "1") {
+  showModal("loginModal");
+}
+
+$("loginForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const {error} = await db.auth.signInWithPassword({
+    email:$("email").value.trim(),
+    password:$("password").value
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  closeModal("loginModal");
+  await checkAdmin();
+});
+
+async function checkAdmin() {
+  const {data:{user},error:userError} = await db.auth.getUser();
+
+  if (userError || !user) return;
+
+  const {data,error} = await db
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id",user.id)
+    .maybeSingle();
+
+  if (error || !data) {
+    alert("This account is not authorized as an Admin.");
+    await db.auth.signOut();
+    return;
+  }
+
+  isAdmin = true;
+
+  $("adminPanel").style.display = "block";
+  $("adminEmail").textContent = user.email || "";
+
+  await loadAdminMovies();
+
+  $("adminPanel").scrollIntoView({
+    behavior:"smooth"
+  });
+}
+
+$("logoutBtn").addEventListener("click",async () => {
+  await db.auth.signOut();
+
+  isAdmin = false;
+  $("adminPanel").style.display = "none";
+  goHome();
+});
+
+/* =====================================
+   ADMIN MOVIE LIST
+===================================== */
+
+async function loadAdminMovies() {
+  if (!isAdmin) return;
+
+  const {data,error} = await db
+    .from("movies")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if (error) {
+    alert("Admin movie list error: " + error.message);
+    return;
+  }
+
+  adminMovies = data || [];
+  renderAdminMovies();
+}
+
+function renderAdminMovies() {
+  const box = $("adminMovies");
+  box.innerHTML = "";
+
+  const query = $("adminSearch").value.trim().toLowerCase();
+
+  const list = adminMovies.filter(movie =>
+    (movie.movie_name || "").toLowerCase().includes(query)
+  );
+
+  if (!list.length) {
+    box.textContent = "No movies found.";
+    return;
+  }
+
+  list.forEach(movie => {
+    const row = document.createElement("div");
+    row.className = "adminrow";
+
+    const name = document.createElement("span");
+    name.textContent =
+      movie.movie_name + " — " +
+      movie.status + " — " +
+      (movie.industry || "Other");
+
+    const actions = document.createElement("span");
+
+    const edit = document.createElement("button");
+    edit.className = "secondary";
+    edit.textContent = "Edit";
+    edit.addEventListener("click",() => fillForm(movie));
+
+    const remove = document.createElement("button");
+    remove.className = "danger";
+    remove.textContent = "Delete";
+    remove.addEventListener("click",() => deleteMovie(movie.id));
+
+    actions.append(edit,remove);
+    row.append(name,actions);
+    box.append(row);
+  });
+}
+
+$("adminSearch").addEventListener("input",renderAdminMovies);
+
+/* =====================================
+   EDIT MOVIE
+===================================== */
+
+async function fillForm(movie) {
+  $("movieId").value = movie.id;
+  $("movieName").value = movie.movie_name || "";
+  $("genre").value = movie.genre || "";
+  $("industry").value = movie.industry || "Other";
+  $("duration").value = movie.duration || "";
+  $("releaseDate").value = movie.release_date || "";
+  $("language").value = movie.language || "";
+  $("starcast").value = movie.starcast || "";
+  $("description").value = movie.description || "";
+  $("trailer").value = movie.trailer_url || "";
+  $("movieStatus").value = movie.status || "draft";
+  $("sortOrder").value = movie.sort_order ?? 100;
+
+  const selectedSections = getSections(movie);
+
+  document.querySelectorAll(
+    '#sectionChoices input[type="checkbox"]'
+  ).forEach(checkbox => {
+    checkbox.checked = selectedSections.includes(checkbox.value);
+  });
+
+  $("movieLinks").value = "Loading saved options...";
+
+  const {data,error} = await db
+    .from("movie_links")
+    .select("*")
+    .eq("movie_id",movie.id)
+    .order("created_at",{ascending:true});
+
+  if (error) {
+    $("movieLinks").value = "";
+    alert("Could not load saved options: " + error.message);
+    return;
+  }
+
+  $("movieLinks").value = (data || []).map(link => [
+    link.quality || "",
+    link.file_size || "",
+    link.language || "",
+    link.server_name || "",
+    link.link_url || "",
+    link.is_active === false ? "no" : "yes"
+  ].join(" | ")).join("\n");
+
+  $("movieForm").scrollIntoView({
+    behavior:"smooth"
+  });
+}
+
+/* =====================================
+   RESET FORM
+===================================== */
+
+function resetMovieForm() {
+  $("movieForm").reset();
+  $("movieId").value = "";
+  $("movieLinks").value = "";
+  $("sortOrder").value = 100;
+
+  document.querySelectorAll(
+    '#sectionChoices input[type="checkbox"]'
+  ).forEach(checkbox => {
+    checkbox.checked = false;
+  });
+}
+
+$("resetForm").addEventListener("click",resetMovieForm);
+
+/* =====================================
+   SAVE MOVIE
+===================================== */
+
+$("movieForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  if (!isAdmin) {
+    alert("Admin login required.");
+    return;
+  }
+
+  const saveButton = $("movieForm").querySelector(
+    'button[type="submit"]'
+  );
+
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving...";
+
+  try {
+    const id = $("movieId").value;
+    let posterUrl = null;
+
+    const file = $("poster").files[0];
+
+    if (file) {
+      if (!["image/jpeg","image/png","image/webp"].includes(file.type)) {
+        alert("Please select a JPG, PNG or WEBP image.");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Poster image must be 5 MB or smaller.");
+        return;
+      }
+
+      const safeName = file.name.replace(
+        /[^a-zA-Z0-9._-]/g,
+        "_"
+      );
+
+      const path = Date.now() + "-" + safeName;
+
+      const {error:uploadError} = await db.storage
+        .from("movie-posters")
+        .upload(path,file,{upsert:false});
+
+      if (uploadError) {
+        alert("Poster upload failed: " + uploadError.message);
+        return;
+      }
+
+      posterUrl = db.storage
+        .from("movie-posters")
+        .getPublicUrl(path).data.publicUrl;
+    }
+
+    const selectedSections = [];
+
+    document.querySelectorAll(
+      '#sectionChoices input[type="checkbox"]:checked'
+    ).forEach(checkbox => {
+      selectedSections.push(checkbox.value);
+    });
+
+    const status = $("movieStatus").value;
+
+    if (status === "upcoming" &&
+        !selectedSections.includes("upcoming")) {
+      selectedSections.push("upcoming");
+    }
+
+    const record = {
+      movie_name:$("movieName").value.trim(),
+      genre:$("genre").value.trim(),
+      industry:$("industry").value,
+      duration:$("duration").value.trim(),
+      release_date:$("releaseDate").value || null,
+      language:$("language").value.trim(),
+      starcast:$("starcast").value.trim(),
+      description:$("description").value.trim(),
+      trailer_url:$("trailer").value.trim() || null,
+      status:status,
+      sections:selectedSections,
+      sort_order:Number($("sortOrder").value || 100)
+    };
+
+    if (posterUrl) {
+      record.poster_url = posterUrl;
+    }
+
+    const result = id
+      ? await db.from("movies")
+          .update(record)
+          .eq("id",id)
+          .select()
+          .single()
+      : await db.from("movies")
+          .insert(record)
+          .select()
+          .single();
+
+    if (result.error) {
+      alert("Movie save failed: " + result.error.message);
+      return;
+    }
+
+    const movie = result.data;
+
+    const lines = $("movieLinks").value
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const optionRows = [];
+
+    for (const line of lines) {
+      const parts = line.split("|").map(value => value.trim());
+
+      if (parts.length < 5 || !parts[0] || !parts[4]) {
+        continue;
+      }
+
+      const url = safeUrl(parts[4]);
+
+      if (url === "#") continue;
+
+      optionRows.push({
+        movie_id:movie.id,
+        quality:parts[0],
+        file_size:parts[1] || null,
+        language:parts[2] || null,
+        server_name:parts[3] || null,
+        link_url:url,
+        is_active:!["no","false","off","0"].includes(
+          (parts[5] || "yes").toLowerCase()
+        )
+      });
+    }
+
+    // Existing options are replaced after movie save.
+    const {error:deleteError} = await db
+      .from("movie_links")
+      .delete()
+      .eq("movie_id",movie.id);
+
+    if (deleteError) {
+      alert(
+        "Movie saved, but old viewing options could not be updated: " +
+        deleteError.message
+      );
+      return;
+    }
+
+    if (optionRows.length) {
+      const {error:insertError} = await db
+        .from("movie_links")
+        .insert(optionRows);
+     
+      if (insertError) {
+        alert(
+          "Movie saved, but viewing options could not be saved: " +
+          insertError.message
+        );
+        return;
+      }
+    }
+
+    alert("Movie saved successfully.");
+
+    resetMovieForm();
+
+    await loadAdminMovies();
+    await loadMovies();
+
+  } catch (error) {
+    alert("Unexpected error: " + error.message);
+
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "Save Movie";
+  }
+});
+
+/* =====================================
+   DELETE MOVIE
+===================================== */
+
+async function deleteMovie(id) {
+  if (!isAdmin) return;
+
+  const confirmed = confirm(
+    "Are you sure you want to delete this movie and its viewing options?"
+  );
+
+  if (!confirmed) return;
+
+  const {error} = await db
+    .from("movies")
+    .delete()
+    .eq("id",id);
+
+  if (error) {
+    alert("Delete failed: " + error.message);
+    return;
+  }
+
+  alert("Movie deleted.");
+ 
+  await loadAdminMovies();
+  await loadMovies();
+}
+
+/* =====================================
+   PASSWORD RECOVERY
+===================================== */
+
+$("passwordForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const password = $("newPassword").value;
+  const confirmPassword = $("confirmPassword").value;
+
+  if (password.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  const {error} = await db.auth.updateUser({
+    password:password
+  });
+
+  if (error) {
+    alert("Password update failed: " + error.message);
+    return;
+  }
+
+  $("passwordForm").reset();
+  closeModal("passwordModal");
+
+  alert("Password updated successfully.");
+
+  await checkAdmin();
+});
+
+/* =====================================
+   AUTH SESSION
+===================================== */
+
+db.auth.onAuthStateChange((event,session) => {
+  if (event === "PASSWORD_RECOVERY" && session) {
+    setTimeout(() => showModal("passwordModal"),0);
+    return;
+  }
+ 
+  if (session) {
+    setTimeout(checkAdmin,0);
+  } else {
+    isAdmin = false;
+    $("adminPanel").style.display = "none";
+  }
+});
+
+/* =====================================
+   START WEBSITE
+===================================== */
+
 loadMovies();
+
 </script>
 
 </body>
