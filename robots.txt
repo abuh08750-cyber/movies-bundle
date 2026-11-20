@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://cineflix-mocha.vercel.app/sitemap.xml
