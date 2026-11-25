@@ -890,11 +890,7 @@ async function openDetails(id) {
 
   showPage("detailPage");
 
-  history.replaceState(
-    null,
-    "",
-    location.pathname + location.search + "#movie/" + id
-  );
+  history.replaceState(null, "", "/movie/" + id);
 }
 
 function addInfoSection(parent,label,value) {
