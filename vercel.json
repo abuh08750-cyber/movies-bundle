@@ -1,8 +1,13 @@
+
 {
   "rewrites": [
     {
       "source": "/movie/:id",
       "destination": "/api/movie/:id"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap.xml"
     }
   ]
 }
