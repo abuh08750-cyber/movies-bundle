@@ -587,9 +587,17 @@ function sortMovies(list) {
   });
 }
 
+
 function createMovieCard(movie) {
   const card = document.createElement("article");
   card.className = "movie";
+
+  const link = document.createElement("a");
+  link.href = "/movie/" + encodeURIComponent(movie.id);
+  link.className = "movie-link";
+  link.style.display = "block";
+  link.style.color = "inherit";
+  link.style.textDecoration = "none";
 
   const poster = document.createElement("img");
   poster.className = "poster";
@@ -612,32 +620,18 @@ function createMovieCard(movie) {
     movie.language || ""
   ].filter(Boolean).join(" • ");
 
-  info.append(title,meta);
-  card.append(poster,info);
+  info.append(title, meta);
+  link.append(poster, info);
+  card.append(link);
 
-  card.addEventListener("click", () => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
     openDetails(movie.id);
   });
 
   return card;
-}
-
-function renderGrid(container,list) {
-  container.innerHTML = "";
-
-  if (!list.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "No movies available in this section yet.";
-    container.append(empty);
-    return;
-  }
-
-  list.forEach(movie => {
-    container.append(createMovieCard(movie));
-  });
-}
-
+   }
+  
 /* =====================================
    SEARCH AND FILTER
 ===================================== */
