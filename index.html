@@ -631,6 +631,12 @@ function createMovieCard(movie) {
   return card;
    }
   
+function renderGrid(container, list) {
+  list.forEach(movie => {
+    container.append(createMovieCard(movie));
+  });
+    }
+   
 /* =====================================
    SEARCH AND FILTER
 ===================================== */
